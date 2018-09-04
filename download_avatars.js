@@ -1,6 +1,15 @@
+var userInput = process.argv.slice(2);
+var owner = userInput[0];
+var repo = userInput[1];
 var request = require('request');
 var secrets = require('./secrets');
 const fs = require('fs');
+
+if(owner === undefined || repo === undefined){
+    console.log("Owner or Repo needs to be entered!");
+} else {
+    getRepoContributors(owner, repo, x);
+};
 
 function getRepoContributors(repoOwner, repoName, cb) {
     var options = {
@@ -40,11 +49,11 @@ function getRepoContributors(repoOwner, repoName, cb) {
   function x(err, afterParsed){
     afterParsed.forEach(function(ele){
         var path = "avatars/" + ele.login + ".jpg";
-        var url = ele.avatar_url
+        var url = ele.avatar_url;
         downloadImageByURL(url, path);
     });
 }
 
-  getRepoContributors('jquery', 'jquery', x)
+//getRepoContributors(owner, repo, x)
 
   //downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg")
