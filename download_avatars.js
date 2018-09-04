@@ -1,5 +1,6 @@
 var request = require('request');
 var secrets = require('./secrets');
+const fs = require('fs');
 
 function getRepoContributors(repoOwner, repoName, cb) {
     var options = {
@@ -7,6 +8,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
         headers: {
           'User-Agent': 'request',
           'Authorization': 'token ' + secrets.GITHUB_TOKEN
+        //   Authorization': secrets.GITHUB_TOKEN
         }
       };
         console.log(options);
@@ -18,12 +20,31 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
   }
 
+// download image
+  function downloadImageByURL(url, filePath) {
+    
+    request.get(url)             
+       .on('error', function (err) {                                 
+         throw err; 
+       })
+       .on('response', function (response) {
+        console.log('Status Code: ', response.statusCode);        
+        console.log('Status Message: ', response.statusMessage);
+        console.log('Content-Type: ', response.headers['content-type']);
+       })
+       .pipe(fs.createWriteStream(filePath));            
+
+  }
+
   
   function x(err, afterParsed){
-    console.log(err, afterParsed);
     afterParsed.forEach(function(ele){
-        console.log(ele.avatar_url);
+        var path = "avatars/" + ele.login + ".jpg";
+        var url = ele.avatar_url
+        downloadImageByURL(url, path);
     });
 }
 
   getRepoContributors('jquery', 'jquery', x)
+
+  //downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg")
